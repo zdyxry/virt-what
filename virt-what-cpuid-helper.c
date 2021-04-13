@@ -47,17 +47,25 @@ known_signature (const char *sig)
     0;
 }
 
+/* Copied from the Linux kernel definition in
+ * arch/x86/include/asm/processor.h
+ */
+static inline void
+cpuid (uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
+{
+  asm volatile ("cpuid"
+                : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
+                : "0" (*eax), "2" (*ecx)
+                : "memory");
+}
+
 static uint32_t
-cpuid (uint32_t eax, char *sig)
+cpuid_leaf (uint32_t eax, char *sig)
 {
   uint32_t *sig32 = (uint32_t *) sig;
 
-  asm volatile (
-        "xchgl %%ebx,%1; xor %%ebx,%%ebx; cpuid; xchgl %%ebx,%1"
-        : "=a" (eax), "+r" (sig32[0]), "=c" (sig32[1]), "=d" (sig32[2])
-        : "0" (eax));
-  sig[12] = 0;
-
+  cpuid (&eax, &sig32[0], &sig32[1], &sig32[2]);
+  sig[12] = 0; /* \0-terminate the string to make string comparison possible */
   return eax;
 }
 
@@ -87,7 +95,7 @@ cpu_sig (void)
    */
   for (leaf = base + 0xff00; leaf >= base; leaf -= 0x100) {
     memset (sig, 0, sizeof sig);
-    cpuid (leaf, sig);
+    cpuid_leaf (leaf, sig);
     if (known_signature (sig)) {
       puts (sig);
       break;
