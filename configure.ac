@@ -41,6 +41,7 @@ tests="\
 	baremetal \
 	bhyve \
 	docker \
+	esx-arm \
 	esx4.1 \
 	hyperv \
 	kvm \
@@ -84,6 +85,7 @@ AC_CONFIG_FILES([Makefile
 	         tests/baremetal/Makefile
 	         tests/bhyve/Makefile
 	         tests/docker/Makefile
+	         tests/esx-arm/Makefile
 	         tests/esx4.1/Makefile
 	         tests/hyperv/Makefile
 	         tests/kvm/Makefile
