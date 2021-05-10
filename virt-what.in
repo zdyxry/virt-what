@@ -264,6 +264,10 @@ elif [ "$arch" = "arm" ] || [ "$arch" = "aarch64" ]; then
         echo xen
         skip_qemu_kvm=true
         skip_lkvm=true
+    elif [ -d "${root}/proc/device-tree/hypervisor" ] &&
+        grep -q "vmware" "${root}/proc/device-tree/hypervisor/compatible"; then
+        echo vmware
+        skip_lkvm=true
     fi
 elif [ "$arch" = "ia64" ]; then
     if [ -d "${root}/sys/bus/xen" -a ! -d "${root}/sys/bus/xen-backend" ]; then
