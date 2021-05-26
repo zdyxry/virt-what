@@ -413,7 +413,7 @@ fi
 
 # Check for AWS.
 # AWS on Xen.
-if echo "$dmi" | grep -q 'Version: [0-9]\.[0-9]\.amazon'; then
+if echo "$dmi" | grep -Eq 'Version: [0-9]+\.[0-9]+\.amazon'; then
     echo aws
 # AWS on baremetal or KVM.
 elif echo "$dmi" | grep -q 'Vendor: Amazon EC2'; then
