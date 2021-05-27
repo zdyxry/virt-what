@@ -113,6 +113,11 @@ dmi=$(LANG=C dmidecode 2>&1)
 
 arch=$(uname -m | sed -e 's/i.86/i386/' | sed -e 's/arm.*/arm/')
 
+# Check for Alibaba Cloud
+if echo "$dmi" | grep -q 'Manufacturer: Alibaba Cloud'; then
+    echo "alibaba_cloud"
+fi
+
 # Check for VMware.
 # cpuid check added by Chetan Loke.
 

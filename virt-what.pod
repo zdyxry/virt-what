@@ -25,6 +25,12 @@ don't know about or cannot detect.
 
 =over 4
 
+=item B<alibaba_cloud>
+
+This is a cloud computing service based on Alibaba Cloud.
+
+Status: contributed by Weisson.
+
 =item B<aws>
 
 Amazon Web Services.
