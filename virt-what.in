@@ -114,8 +114,13 @@ dmi=$(LANG=C dmidecode 2>&1)
 arch=$(uname -m | sed -e 's/i.86/i386/' | sed -e 's/arm.*/arm/')
 
 # Check for Alibaba Cloud
-if echo "$dmi" | grep -q 'Manufacturer: Alibaba Cloud'; then
-    echo "alibaba_cloud"
+if echo "$dmi" | grep -q 'Manufacturer: Alibaba'; then
+    # Check for Alibaba Cloud X-Dragon Architecture
+    if ( { echo -e "GET /latest/meta-datainstance/instance-type HTTP/1.0\r\nHost: 100.100.100.200\r\n\r" >&3; grep -sq 'ebm' <&3 ; } 3<> /dev/tcp/100.100.100.200/80 ) 2>/dev/null ; then
+        echo "alibaba_cloud-x_dragon"
+    else
+        echo "alibaba_cloud"
+    fi
 fi
 
 # Check for VMware.
