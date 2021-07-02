@@ -27,7 +27,7 @@ don't know about or cannot detect.
 
 =item B<alibaba_cloud>
 
-=item B<alibaba_cloud-x_dragon>
+=item B<alibaba_cloud-ebm>
 
 This is a cloud computing service based on Alibaba Cloud.
 
