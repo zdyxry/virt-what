@@ -17,6 +17,7 @@
 
 output="$(PATH=../..:$PATH virt-what --test-root=. 2>&1)"
 expected="rhev
+redhat
 kvm"
 
 if [ "$output" != "$expected" ]; then

@@ -16,7 +16,8 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 output="$(PATH=../..:$PATH virt-what --test-root=. 2>&1)"
-expected="nutanix_ahv"
+expected="nutanix_ahv
+redhat"
 
 if [ "$output" != "$expected" ]; then
     echo "$0: test failed because output did not match expected"

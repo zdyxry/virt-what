@@ -16,7 +16,8 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 output="$(PATH=../..:$PATH virt-what --test-root=. 2>&1)"
-expected="xen
+expected="redhat
+xen
 xen-hvm"
 
 if [ "$output" != "$expected" ]; then

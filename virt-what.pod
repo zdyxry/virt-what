@@ -246,6 +246,12 @@ The guest is running on a Red Hat Enterprise Virtualization (RHEV) node.
 
 Status: confirmed by RWMJ
 
+=item B<redhat>
+
+The guest is running on the Red Hat hypervisor.
+
+Status: confirmed by RWMJ
+
 =item B<uml>
 
 This is a User-Mode Linux (UML) guest.

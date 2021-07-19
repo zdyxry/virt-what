@@ -252,6 +252,11 @@ if echo "$dmi" | grep -q 'Product Name: Google Compute Engine'; then
     echo google_cloud
 fi
 
+# Red Hat's hypervisor.
+if echo "$dmi" | grep -q 'Manufacturer: Red Hat'; then
+    echo redhat
+fi
+
 # Check for Xen.
 
 if [ "$cpuid" = "XenVMMXenVMM" ] &&
