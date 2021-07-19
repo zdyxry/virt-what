@@ -55,6 +55,12 @@ This is a Docker container.
 
 Status: confirmed by Charles Nguyen
 
+=item B<google_cloud>
+
+This is running on Google Cloud Platform / Google Compute Engine.
+
+Status: not confirmed
+
 =item B<hyperv>
 
 This is Microsoft Hyper-V hypervisor.
