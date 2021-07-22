@@ -232,11 +232,8 @@ if echo "$dmi" | grep -q 'Vendor: Parallels'; then
 fi
 
 # Check for Nutanix AHV.
-# This is sufficiently different from KVM and has Viridian extensions,
-# so skip the KVM test.
 if echo "$dmi" | grep -q 'Manufacturer: Nutanix'; then
     echo nutanix_ahv
-    skip_qemu_kvm=true
 fi
 
 # Check for oVirt/RHEV.

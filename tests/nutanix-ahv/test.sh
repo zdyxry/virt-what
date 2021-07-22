@@ -17,7 +17,8 @@
 
 output="$(PATH=../..:$PATH virt-what --test-root=. 2>&1)"
 expected="nutanix_ahv
-redhat"
+redhat
+kvm"
 
 if [ "$output" != "$expected" ]; then
     echo "$0: test failed because output did not match expected"
