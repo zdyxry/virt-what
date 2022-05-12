@@ -117,6 +117,12 @@ This is a KVM guest running on an IBM System Z hardware system.
 
 Status: contributed by Thomas Huth
 
+=item B<illumos-lx>
+
+The guest is running on Illumos with a Linux syscall emulation layer.
+
+Status: contributed by Steve Mokris
+
 =item B<ldoms>
 
 The guest appears to be running on an Linux SPARC system with

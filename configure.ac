@@ -45,6 +45,7 @@ tests="\
 	esx-arm \
 	esx4.1 \
 	hyperv \
+	illumos-lx \
 	kvm \
 	kvm-explicit-cpu \
 	ldoms \
@@ -91,6 +92,7 @@ AC_CONFIG_FILES([Makefile
 	         tests/esx-arm/Makefile
 	         tests/esx4.1/Makefile
 	         tests/hyperv/Makefile
+	         tests/illumos-lx/Makefile
 	         tests/kvm/Makefile
 	         tests/kvm-explicit-cpu/Makefile
 	         tests/ldoms/Makefile

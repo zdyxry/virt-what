@@ -179,6 +179,13 @@ if [ -e "${root}/proc/1/environ" ] &&
     echo lxc
 fi
 
+if [ -e "${root}/proc/1/environ" ] &&
+    tr '\0' '\n' < "${root}/proc/1/environ" | grep -q '^container=zone$' &&
+    [ -e "${root}/proc/version" ] &&
+    grep -q 'BrandZ virtual linux' < "${root}/proc/version"; then
+    echo illumos-lx
+fi
+
 # Check for Linux-VServer
 if test -e "${root}/proc/self/status" \
    && cat "${root}/proc/self/status" | grep -q "VxID: [0-9]*"; then
