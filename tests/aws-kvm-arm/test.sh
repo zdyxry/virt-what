@@ -16,9 +16,8 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 output="$(PATH=../..:$PATH virt-what --test-root=. 2>&1)"
-# XXX At the moment KVM cannot be detected on this platform.
-# We hope to fix that, but for now the only fact printed is "aws".
-expected="aws"
+expected="kvm
+aws"
 
 if [ "$output" != "$expected" ]; then
     echo "$0: test failed because output did not match expected"

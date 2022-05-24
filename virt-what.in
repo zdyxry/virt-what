@@ -329,6 +329,11 @@ if ! "$skip_qemu_kvm"; then
     elif echo "$dmi" | grep -q 'Manufacturer: KVM'; then
         echo kvm
         skip_lkvm=true
+    elif echo "$dmi" | grep -q 'Manufacturer: Amazon EC2' &&
+        echo "$dmi" | grep -q 'System is a virtual machine'; then
+        # This is for AWS Graviton (Arm) systems which don't have CPUID.
+        echo kvm
+        skip_lkvm=true
     elif echo "$dmi" | grep -q 'Manufacturer: QEMU'; then
         # The test for KVM above failed, so now we know we're
         # not using KVM acceleration.
