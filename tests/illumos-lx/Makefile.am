@@ -22,4 +22,7 @@ TESTS = test.sh
 EXTRA_DIST = \
 	test.sh \
 	proc/1/environ \
-	proc/version
+	proc/version \
+	sbin/dmidecode \
+	sbin/uname \
+	sbin/virt-what-cpuid-helper
