@@ -44,6 +44,7 @@ tests="\
 	docker \
 	esx-arm \
 	esx4.1 \
+	google-cloud \
 	hyperv \
 	illumos-lx \
 	kvm \
@@ -91,6 +92,7 @@ AC_CONFIG_FILES([Makefile
 	         tests/docker/Makefile
 	         tests/esx-arm/Makefile
 	         tests/esx4.1/Makefile
+		 tests/google-cloud/Makefile
 	         tests/hyperv/Makefile
 	         tests/illumos-lx/Makefile
 	         tests/kvm/Makefile

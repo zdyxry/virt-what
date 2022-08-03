@@ -59,7 +59,7 @@ Status: confirmed by Charles Nguyen
 
 This is running on Google Cloud Platform / Google Compute Engine.
 
-Status: not confirmed
+Status: confirmed by RWMJ
 
 =item B<hyperv>
 
