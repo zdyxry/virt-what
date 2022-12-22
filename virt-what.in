@@ -165,7 +165,6 @@ fi
 # /proc/vz - always exists if OpenVZ kernel is running (inside and outside
 # container)
 # /proc/bc - exists on node, but not inside container.
-
 if [ -d "${root}/proc/vz" -a ! -d "${root}/proc/bc" ]; then
     echo openvz
 fi
@@ -173,18 +172,32 @@ fi
 # Check for LXC containers
 # http://www.freedesktop.org/wiki/Software/systemd/ContainerInterface
 # Added by Marc Fournier
-
 if [ -e "${root}/proc/1/environ" ] &&
     tr '\000' '\n' < "${root}/proc/1/environ" |
         grep -Eiq '^container=lxc'; then
     echo lxc
 fi
 
+# Check for Illumos LX
 if [ -e "${root}/proc/1/environ" ] &&
     tr '\0' '\n' < "${root}/proc/1/environ" | grep -q '^container=zone$' &&
     [ -e "${root}/proc/version" ] &&
     grep -q 'BrandZ virtual linux' < "${root}/proc/version"; then
     echo illumos-lx
+fi
+
+# Check for Docker.
+if [ -f "${root}/.dockerenv" ] || [ -f "${root}/.dockerinit" ] || \
+   grep -qF /docker/ "${root}/proc/self/cgroup" 2>/dev/null; then
+    echo docker
+fi
+
+# Check for Podman.
+if [ -e "${root}/proc/1/environ" ] &&
+    cat "${root}/proc/1/environ" | tr '\000' '\n' | grep -Eiq '^container=podman'; then
+    echo podman
+elif grep -qF /libpod- "${root}/proc/self/cgroup" 2>/dev/null; then
+    echo podman
 fi
 
 # Check for Linux-VServer
@@ -379,20 +392,6 @@ if ! "$skip_lkvm"; then
             echo lkvm
         fi
     fi
-fi
-
-# Check for Docker.
-if [ -f "${root}/.dockerenv" ] || [ -f "${root}/.dockerinit" ] || \
-   grep -qF /docker/ "${root}/proc/self/cgroup" 2>/dev/null; then
-    echo docker
-fi
-
-# Check for Podman.
-if [ -e "${root}/proc/1/environ" ] &&
-    cat "${root}/proc/1/environ" | tr '\000' '\n' | grep -Eiq '^container=podman'; then
-    echo podman
-elif grep -qF /libpod- "${root}/proc/self/cgroup" 2>/dev/null; then
-    echo podman
 fi
 
 # Check ppc64 lpar, kvm or powerkvm
