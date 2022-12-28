@@ -89,7 +89,7 @@ Additional facts listed below may also be printed.
 
 =item B<ibm_systemz-direct>
 
-This is Linux running directly on a IBM SystemZ hardware partitioning
+This is Linux running directly on an IBM SystemZ hardware partitioning
 system.
 
 This is expected to be a highly unusual configuration - if
@@ -125,7 +125,7 @@ Status: contributed by Steve Mokris
 
 =item B<ldoms>
 
-The guest appears to be running on an Linux SPARC system with
+The guest appears to be running on a Linux SPARC system with
 Oracle VM Server for SPARC (Logical Domains) support.
 
 Status: contributed by Darren Kenny
