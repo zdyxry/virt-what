@@ -203,6 +203,12 @@ The guest is running inside Nutanix Acropolis Hypervisor (AHV).
 
 Status: confirmed by RWMJ.
 
+=item B<oci>
+
+The guest is running in an OCI container.
+
+Status: contributed by Alessandro Valentini, confirmed by RWMJ
+
 =item B<openvz>
 
 The guest appears to be running inside an OpenVZ or Virtuozzo
@@ -226,7 +232,7 @@ Status: contributed by Justin Clift
 
 =item B<podman>
 
-This is a Podman container.
+This is a Podman container.  (See also C<oci> above.)
 
 Status: contributed by Jordan Webb
 

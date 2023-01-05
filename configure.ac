@@ -56,6 +56,7 @@ tests="\
 	lx86 \
 	lxc \
 	nutanix-ahv \
+	oci \
 	parallels-desktop \
 	podman \
 	ppc64-baremetal \
@@ -104,6 +105,7 @@ AC_CONFIG_FILES([Makefile
 	         tests/lx86/Makefile
 	         tests/lxc/Makefile
 	         tests/nutanix-ahv/Makefile
+	         tests/oci/Makefile
 	         tests/parallels-desktop/Makefile
 	         tests/podman/Makefile
 	         tests/ppc64-baremetal/Makefile

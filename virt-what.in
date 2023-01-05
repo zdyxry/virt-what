@@ -192,6 +192,12 @@ if [ -f "${root}/.dockerenv" ] || [ -f "${root}/.dockerinit" ] || \
     echo docker
 fi
 
+# Check for OCI.
+if [ -e "${root}/proc/1/environ" ] &&
+    cat "${root}/proc/1/environ" | tr '\000' '\n' | grep -Eiq '^container=oci'; then
+    echo oci
+fi
+
 # Check for Podman.
 if [ -e "${root}/proc/1/environ" ] &&
     cat "${root}/proc/1/environ" | tr '\000' '\n' | grep -Eiq '^container=podman'; then
