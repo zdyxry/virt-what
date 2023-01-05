@@ -20,8 +20,8 @@ CLEANFILES = *~
 TESTS = test.sh
 
 EXTRA_DIST = \
-	1/environ \
 	test.sh \
+	proc/1/environ \
 	proc/cpuinfo \
 	proc/self/cgroup \
 	proc/self/status \
