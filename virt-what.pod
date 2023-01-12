@@ -270,6 +270,12 @@ This is a User-Mode Linux (UML) guest.
 
 Status: contributed by Laurent Léonard
 
+=item B<upcloud>
+
+This is running on UpCloud.
+
+Status: contributed by Ville Skyttä
+
 =item B<virt>
 
 Some sort of virtualization appears to be present, but we are not sure

@@ -72,6 +72,7 @@ tests="\
 	rhel5-xen-domU-hvm-ia64 \
 	rhel5-xen-domU-pv \
 	rhev \
+	upcloud \
 	vmm \
 	xen-arm \
 	zvm \
@@ -121,6 +122,7 @@ AC_CONFIG_FILES([Makefile
 	         tests/rhel5-xen-domU-hvm-ia64/Makefile
 	         tests/rhel5-xen-domU-pv/Makefile
 	         tests/rhev/Makefile
+	         tests/upcloud/Makefile
 	         tests/vmm/Makefile
 	         tests/xen-arm/Makefile
 	         tests/zvm/Makefile

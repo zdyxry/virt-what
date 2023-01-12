@@ -457,3 +457,8 @@ if echo "$dmi" | grep -Eq 'Version: [0-9]+\.[0-9]+\.amazon'; then
 elif echo "$dmi" | grep -q 'Vendor: Amazon EC2'; then
     echo aws
 fi
+
+# UpCloud
+if echo "$dmi" | grep -q 'Manufacturer: UpCloud'; then
+    echo upcloud
+fi
