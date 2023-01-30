@@ -34,6 +34,7 @@ AM_CONDITIONAL([HOST_CPU_IA64], [ test "x$host_cpu" = "xia64" ])
 
 dnl List of tests.
 tests="\
+	alibaba-cloud-arm \
 	alibaba-cloud-x86 \
 	aws-baremetal-x86 \
 	aws-kvm-arm \
@@ -83,6 +84,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([virt-what],[chmod +x virt-what])
 AC_CONFIG_FILES([Makefile
                  tests/Makefile
+                 tests/alibaba-cloud-arm/Makefile
                  tests/alibaba-cloud-x86/Makefile
 	         tests/aws-baremetal-x86/Makefile
 	         tests/aws-kvm-arm/Makefile
