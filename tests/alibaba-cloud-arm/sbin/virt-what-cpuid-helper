@@ -1,0 +1,3 @@
+#!/bin/sh -
+# Arm, so no cpuid.
+# No output, exits with 0.
