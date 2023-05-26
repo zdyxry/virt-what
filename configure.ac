@@ -32,6 +32,9 @@ dnl Architecture we are compiling for.
 AC_CANONICAL_HOST
 AM_CONDITIONAL([HOST_CPU_IA64], [ test "x$host_cpu" = "xia64" ])
 
+PKG_HAVE_DEFINE_WITH_MODULES(TPM2_TSS, tss2-esys, [tpm2-tss package])
+
+
 dnl List of tests.
 tests="\
 	alibaba-cloud-arm \

@@ -26,5 +26,8 @@ Makefile.in
 /test-driver
 /virt-what
 /virt-what-cpuid-helper
+/virt-what-cvm
+/virt-what-cvm.1
+/virt-what-cvm.txt
 /virt-what.1
 /virt-what.txt
