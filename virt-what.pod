@@ -409,6 +409,7 @@ specific features your drivers need (eg. for the presence of PCI devices).
 
 =head1 SEE ALSO
 
+L<virt-what-cvm(1)>,
 L<http://people.redhat.com/~rjones/virt-what/>,
 L<http://www.vmware.com/>,
 L<http://www.microsoft.com/windows/products/winfamily/virtualpc>,
