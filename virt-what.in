@@ -259,7 +259,8 @@ if echo "$dmi" | grep -q 'Vendor: Parallels'; then
 fi
 
 # Check for Nutanix AHV.
-if echo "$dmi" | grep -q 'Manufacturer: Nutanix'; then
+if echo "$dmi" | grep -q 'Manufacturer: Nutanix' &&
+   echo "$dmi" | grep -q 'Product Name: AHV'; then
     echo nutanix_ahv
 fi
 
