@@ -42,6 +42,7 @@ tests="\
 	aws-xen-x86 \
 	baremetal \
 	bhyve \
+	crio \
 	docker \
 	esx-arm \
 	esx4.1 \
@@ -92,6 +93,7 @@ AC_CONFIG_FILES([Makefile
 	         tests/aws-xen-x86/Makefile
 	         tests/baremetal/Makefile
 	         tests/bhyve/Makefile
+		 tests/crio/Makefile
 	         tests/docker/Makefile
 	         tests/esx-arm/Makefile
 	         tests/esx4.1/Makefile

@@ -198,6 +198,12 @@ if [ -e "${root}/proc/1/environ" ] &&
     echo oci
 fi
 
+# Check for CRI-O.
+if [ -e "${root}/proc/1/environ" ] &&
+    cat "${root}/proc/1/environ" | tr '\000' '\n' | grep -Eiq '^container=crio'; then
+    echo crio
+fi
+
 # Check for Podman.
 if [ -e "${root}/proc/1/environ" ] &&
     cat "${root}/proc/1/environ" | tr '\000' '\n' | grep -Eiq '^container=podman'; then
