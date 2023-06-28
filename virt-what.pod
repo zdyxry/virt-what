@@ -49,6 +49,12 @@ This is a bhyve (FreeBSD hypervisor) guest.
 
 Status: contributed by Leonardo Brondani Schenkel.
 
+=item B<crio>
+
+The guest is running in a CRI-O container.
+
+Status: suggested by Alessandro Taufer, confirmed by RWMJ & Xiaodai Wang
+
 =item B<docker>
 
 This is a Docker container.
