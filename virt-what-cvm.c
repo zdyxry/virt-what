@@ -70,13 +70,32 @@ static bool dodebug = false;
 
 #define CPUID_INTEL_TDX_ENUMERATION 0x21
 
+/* Requirements for Implementing the Microsoft Hypervisor Interface
+ * https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/tlfs
+ */
+#define CPUID_HYPERV_VENDOR_AND_MAX_FUNCTIONS 0x40000000
+
+#define CPUID_HYPERV_FEATURES 0x40000003
+
+#define CPUID_HYPERV_ISOLATION_CONFIG 0x4000000C
+
+#define CPUID_HYPERV_MIN 0x40000005
+#define CPUID_HYPERV_MAX 0x4000ffff
 
 #define CPUID_SIG_AMD       "AuthenticAMD"
 #define CPUID_SIG_INTEL     "GenuineIntel"
 #define CPUID_SIG_INTEL_TDX "IntelTDX    "
+#define CPUID_SIG_HYPERV    "Microsoft Hv"
 
 /* ecx bit 31: set => hyperpvisor, unset => bare metal */
 #define CPUID_FEATURE_HYPERVISOR (1 << 31)
+
+/* Linux include/asm-generic/hyperv-tlfs.h */
+#define CPUID_HYPERV_CPU_MANAGEMENT (1 << 12) /* root partition */
+#define CPUID_HYPERV_ISOLATION      (1 << 22) /* confidential VM partition */
+
+#define CPUID_HYPERV_ISOLATION_TYPE_MASK 0xf
+#define CPUID_HYPERV_ISOLATION_TYPE_SNP 2
 
 /*
  * This TPM NV data format is not explicitly documented anywhere,
@@ -272,6 +291,44 @@ cpu_sig_amd_azure (void)
   return ret;
 }
 
+static bool
+cpu_sig_amd_hyperv (void)
+{
+  uint32_t eax, ebx, ecx, edx;
+  char sig[13];
+  uint32_t feat;
+
+  feat = cpuid_leaf (CPUID_HYPERV_VENDOR_AND_MAX_FUNCTIONS, sig, false);
+
+  if (feat < CPUID_HYPERV_MIN ||
+      feat > CPUID_HYPERV_MAX)
+    return false;
+
+  if (memcmp (sig, CPUID_SIG_HYPERV, sizeof(sig)) != 0)
+    return false;
+
+  debug ("CPUID is on hyperv\n");
+  eax = CPUID_HYPERV_FEATURES;
+  ebx = ecx = edx = 0;
+
+  cpuid(&eax, &ebx, &ecx, &edx);
+
+  if (ebx & CPUID_HYPERV_ISOLATION &&
+      !(ebx & CPUID_HYPERV_CPU_MANAGEMENT)) {
+
+    eax = CPUID_HYPERV_ISOLATION_CONFIG;
+    ebx = ecx = edx = 0;
+    cpuid(&eax, &ebx, &ecx, &edx);
+
+    if ((ebx & CPUID_HYPERV_ISOLATION_TYPE_MASK) ==
+	CPUID_HYPERV_ISOLATION_TYPE_SNP) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 static void
 cpu_sig_amd (void)
 {
@@ -298,9 +355,10 @@ cpu_sig_amd (void)
    * exposes a SEV-SNP attestation report as evidence.
    */
   if (!(eax & (1 << 1))) {
-    debug ("No sev in CPUID, try azure TPM NV\n");
+    debug ("No sev in CPUID, try hyperv CPUID/azure TPM NV\n");
 
-    if (cpu_sig_amd_azure()) {
+    if (cpu_sig_amd_hyperv () ||
+        cpu_sig_amd_azure()) {
       puts ("amd-sev-snp");
       puts ("azure-hcl");
     } else {
