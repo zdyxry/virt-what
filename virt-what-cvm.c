@@ -209,11 +209,14 @@ cpuid (uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
 
 
 static uint32_t
-cpuid_leaf (uint32_t eax, char *sig)
+cpuid_leaf (uint32_t eax, char *sig, bool swapped)
 {
   uint32_t *sig32 = (uint32_t *) sig;
 
-  cpuid (&eax, &sig32[0], &sig32[2], &sig32[1]);
+  if (swapped)
+    cpuid (&eax, &sig32[0], &sig32[2], &sig32[1]);
+  else
+    cpuid (&eax, &sig32[0], &sig32[1], &sig32[2]);
   sig[12] = 0; /* \0-terminate the string to make string comparison possible */
   debug("CPUID sig %s\n", sig);
   return eax;
@@ -335,7 +338,7 @@ cpu_sig_intel (void)
     return;
 
   memset (sig, 0, sizeof sig);
-  cpuid_leaf (CPUID_INTEL_TDX_ENUMERATION, sig);
+  cpuid_leaf (CPUID_INTEL_TDX_ENUMERATION, sig, true);
 
   if (memcmp (sig, CPUID_SIG_INTEL_TDX, sizeof(sig)) == 0)
     puts ("intel-tdx");
@@ -368,7 +371,7 @@ cpu_sig (void)
     return;
 
   memset (sig, 0, sizeof sig);
-  cpuid_leaf (0, sig);
+  cpuid_leaf (0, sig, true);
 
   if (memcmp (sig, CPUID_SIG_AMD, sizeof(sig)) == 0)
     cpu_sig_amd ();
