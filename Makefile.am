@@ -30,9 +30,6 @@ if HOST_CPU_IA64
 libexec_PROGRAMS += virt-what-ia64-xen-rdtsc-test
 endif
 
-virt_what_cvm_LDADD = $(TPM2_TSS_LIBS)
-virt_what_cvm_CFLAGS = $(TPM2_TSS_CFLAGS)
-
 if HAVE_POD2MAN
 
 CLEANFILES += virt-what.1 virt-what-cvm.1 virt-what.txt virt-what-cvm.txt

@@ -26,10 +26,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <getopt.h>
-#ifdef HAVE_TPM2_TSS
-#include <tss2/tss2_esys.h>
-#include <assert.h>
-#endif
 
 static bool dodebug = false;
 
@@ -97,120 +93,7 @@ static bool dodebug = false;
 #define CPUID_HYPERV_ISOLATION_TYPE_MASK 0xf
 #define CPUID_HYPERV_ISOLATION_TYPE_SNP 2
 
-/*
- * This TPM NV data format is not explicitly documented anywhere,
- * but the header definition is present in code at:
- *
- * https://github.com/kinvolk/azure-cvm-tooling/blob/main/az-snp-vtpm/src/hcl.rs
- */
-#define TPM_AZURE_HCLA_REPORT_INDEX 0x01400001
-
-struct TPMAzureHCLAHeader {
-  uint32_t signature;
-  uint32_t version;
-  uint32_t report_len;
-  uint32_t report_type;
-  uint32_t unknown[4];
-};
-
-/* The bytes for "HCLA" */
-#define TPM_AZURE_HCLA_SIGNATURE 0x414C4348
-#define TPM_AZURE_HCLA_VERSION 0x1
-#define TPM_AZURE_HCLA_REPORT_TYPE_SNP 0x2
-
 #if defined(__x86_64__)
-
-#ifdef HAVE_TPM2_TSS
-static char *
-tpm_nvread(uint32_t nvindex, size_t *retlen)
-{
-  TSS2_RC rc;
-  ESYS_CONTEXT *ctx = NULL;
-  ESYS_TR primary = ESYS_TR_NONE;
-  ESYS_TR session = ESYS_TR_NONE;
-  ESYS_TR nvobj = ESYS_TR_NONE;
-  TPM2B_NV_PUBLIC *pubData = NULL;
-  TPMT_SYM_DEF sym = {
-    .algorithm = TPM2_ALG_AES,
-    .keyBits = { .aes = 128 },
-    .mode = { .aes = TPM2_ALG_CFB }
-  };
-  char *ret;
-  size_t retwant;
-
-  rc = Esys_Initialize(&ctx, NULL, NULL);
-  if (rc != TSS2_RC_SUCCESS)
-    return NULL;
-
-  rc = Esys_Startup(ctx, TPM2_SU_CLEAR);
-  debug("tpm startup %d\n", rc);
-  if (rc != TSS2_RC_SUCCESS)
-    goto error;
-
-  rc = Esys_StartAuthSession(ctx, ESYS_TR_NONE, ESYS_TR_NONE,
-			     ESYS_TR_NONE, ESYS_TR_NONE, ESYS_TR_NONE,
-			     NULL, 0,
-			     &sym, TPM2_ALG_SHA256, &session);
-  debug("tpm auth session %d\n", rc);
-  if (rc != TSS2_RC_SUCCESS)
-    goto error;
-
-  rc = Esys_TR_FromTPMPublic(ctx, nvindex, ESYS_TR_NONE,
-			     ESYS_TR_NONE, ESYS_TR_NONE, &nvobj);
-  debug("tpm from public %d\n", rc);
-  if (rc != TSS2_RC_SUCCESS)
-    goto error;
-
-  rc = Esys_NV_ReadPublic(ctx, nvobj, ESYS_TR_NONE,
-			  ESYS_TR_NONE, ESYS_TR_NONE,
-			  &pubData, NULL);
-  debug("tpm read public %d\n", rc);
-  if (rc != TPM2_RC_SUCCESS)
-    goto error;
-
-  retwant = pubData->nvPublic.dataSize;
-  free(pubData);
-  *retlen = 0;
-  ret = malloc(retwant);
-  assert(ret);
-  while (*retlen < retwant) {
-    size_t want = retwant - *retlen;
-    TPM2B_MAX_NV_BUFFER *data = NULL;
-    if (want > 1024)
-      want = 1024;
-    rc = Esys_NV_Read(ctx,  ESYS_TR_RH_OWNER, nvobj, session, ESYS_TR_NONE, ESYS_TR_NONE,
-		      want, *retlen, &data);
-    debug("tpm nv read %d\n", rc);
-    if (rc != TPM2_RC_SUCCESS) {
-      free(ret);
-      goto error;
-    }
-
-    memcpy(ret + *retlen, data->buffer, data->size);
-    *retlen += data->size;
-    free(data);
-  }
-
-  return ret;
-
- error:
-  if (nvobj != ESYS_TR_NONE)
-    Esys_FlushContext(ctx, nvobj);
-  if (session != ESYS_TR_NONE)
-    Esys_FlushContext(ctx, session);
-  if (primary != ESYS_TR_NONE)
-    Esys_FlushContext(ctx, primary);
-  Esys_Finalize(&ctx);
-  *retlen = 0;
-  return NULL;
-}
-#else /* ! HAVE_TPM2_TSS */
-static char *
-tpm_nvread(uint32_t nvindex, size_t *retlen)
-{
-  return NULL;
-}
-#endif /* ! HAVE_TPM2_TSS */
 
 /* Copied from the Linux kernel definition in
  * arch/x86/include/asm/processor.h
@@ -260,34 +143,6 @@ msr (off_t index)
 
   debug ("MSR %llx result %llx\n", (unsigned long long)index,
 	 (unsigned long long)ret);
-  return ret;
-}
-
-bool
-cpu_sig_amd_azure (void)
-{
-  size_t datalen = 0;
-  char *data = tpm_nvread(TPM_AZURE_HCLA_REPORT_INDEX, &datalen);
-  struct TPMAzureHCLAHeader *header = (struct TPMAzureHCLAHeader *)data;
-  bool ret;
-
-  if (!data)
-    return false;
-
-  if (datalen < sizeof(struct TPMAzureHCLAHeader)) {
-    debug ("TPM data len is too small to be an Azure HCLA report");
-    return false;
-  }
-
-  debug ("Azure TPM HCLA report header sig %x ver %x type %x\n",
-	 header->signature, header->version, header->report_type);
-
-  ret = (header->signature == TPM_AZURE_HCLA_SIGNATURE &&
-	 header->version == TPM_AZURE_HCLA_VERSION &&
-	 header->report_type == TPM_AZURE_HCLA_REPORT_TYPE_SNP);
-  debug ("Azure TPM HCLA report present ? %d\n", ret);
-
-  free(data);
   return ret;
 }
 
@@ -350,19 +205,18 @@ cpu_sig_amd (void)
 
   /* bit 1 == CPU supports SEV feature
    *
-   * Note, Azure blocks this CPUID leaf from its SEV-SNP
-   * guests, so we must fallback to probing the TPM which
-   * exposes a SEV-SNP attestation report as evidence.
+   * Note, HyperV/Azure blocks this CPUID leaf from its SEV-SNP
+   * guests. We already did an alternative detection mechanism
+   * in such VMs, so should not even be running this code.
    */
   if (!(eax & (1 << 1))) {
-    debug ("No sev in CPUID, try hyperv CPUID/azure TPM NV\n");
+    debug ("No sev in CPUID, try hyperv CPUID\n");
 
-    if (cpu_sig_amd_hyperv () ||
-        cpu_sig_amd_azure()) {
+    if (cpu_sig_amd_hyperv ()) {
       puts ("amd-sev-snp");
       puts ("azure-hcl");
     } else {
-      debug("No azure TPM NV\n");
+      debug("No hyperv CPUID\n");
     }
     return;
   }
@@ -482,9 +336,6 @@ main(int argc, char **argv)
       exit(c == 'h' ? EXIT_SUCCESS : EXIT_FAILURE);
     }
   }
-
-  if (!dodebug)
-    setenv("TSS2_LOG", "all+none", 1);
 
   cpu_sig ();
 
