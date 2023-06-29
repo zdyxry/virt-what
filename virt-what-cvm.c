@@ -35,6 +35,9 @@ static bool dodebug = false;
 
 #define debug(...) do { if (dodebug) fprintf(stderr, __VA_ARGS__); } while(0)
 
+
+#define CPUID_PROCESSOR_INFO_AND_FEATURE_BITS 0x1
+
 /*
  * AMD64 Architecture Programmer’s Manual Volume 3:
  * General-Purpose and System Instructions.
@@ -71,6 +74,9 @@ static bool dodebug = false;
 #define CPUID_SIG_AMD       "AuthenticAMD"
 #define CPUID_SIG_INTEL     "GenuineIntel"
 #define CPUID_SIG_INTEL_TDX "IntelTDX    "
+
+/* ecx bit 31: set => hyperpvisor, unset => bare metal */
+#define CPUID_FEATURE_HYPERVISOR (1 << 31)
 
 /*
  * This TPM NV data format is not explicitly documented anywhere,
@@ -335,10 +341,31 @@ cpu_sig_intel (void)
     puts ("intel-tdx");
 }
 
+static bool
+cpu_is_hv (void)
+{
+  uint32_t eax, ebx, ecx, edx;
+  bool is_hv;
+
+  eax = CPUID_PROCESSOR_INFO_AND_FEATURE_BITS;
+  ebx = ecx = edx = 0;
+
+  cpuid(&eax, &ebx, &ecx, &edx);
+
+  is_hv = ecx & CPUID_FEATURE_HYPERVISOR;
+
+  debug ("CPUID is hypervisor: %s\n", is_hv ? "yes" : "no");
+  return is_hv;
+}
+
 static void
 cpu_sig (void)
 {
   char sig[13];
+
+  /* Skip everything on bare metal */
+  if (!cpu_is_hv ())
+    return;
 
   memset (sig, 0, sizeof sig);
   cpuid_leaf (0, sig);
