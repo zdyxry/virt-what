@@ -214,7 +214,7 @@ cpu_sig_amd (void)
 
     if (cpu_sig_amd_hyperv ()) {
       puts ("amd-sev-snp");
-      puts ("azure-hcl");
+      puts ("hyperv-hcl");
     } else {
       debug("No hyperv CPUID\n");
     }

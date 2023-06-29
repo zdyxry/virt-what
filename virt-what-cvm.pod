@@ -52,11 +52,11 @@ This is a confidential guest running with Intel TDX technology
 
 Status: tested on Microsoft Azure TDX CVM (preview)
 
-=item B<azure-hcl>
+=item B<hyperv-hcl>
 
 This is a confidential guest running unenlightened under the
-Azure HCL (Host Compatibility Layer). This will be paired with
-B<amd-sev-snp>.
+HyperV (Azure) HCL (Host Compatibility Layer). This will be
+paired with B<amd-sev-snp>.
 
 Status: tested on Microsoft Azure SEV-SNP CVM
 
